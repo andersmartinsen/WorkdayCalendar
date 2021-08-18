@@ -30,37 +30,37 @@ public class WorkdayCalendar {
         float fminutes = remaining * 60f;
         int minutes = (int) fminutes;
 
-        LocalDateTime localDateTime = startDato.plusDays(getAntallBusinessdagerFraDato(startDate, days));
+        LocalDateTime localDateTime = startDato.plusDays(numberOfBusinessDaysFromDate(startDate, days));
         LocalDateTime endDate =
-            startDato.plusDays(getAntallBusinessdagerFraDato(startDate, days)).plusHours(hours).plusMinutes(minutes);
+            startDato.plusDays(numberOfBusinessDaysFromDate(startDate, days)).plusHours(hours).plusMinutes(minutes);
         Instant instant = endDate.atZone(ZoneId.systemDefault()).toInstant();
 
         return Date.from(instant);
     }
 
-    public Integer getAntallBusinessdagerFraDato(Date startdato, Integer antallDager) {
+    public Integer numberOfBusinessDaysFromDate(Date startDate, Integer numberOfDays) {
         Calendar startCal;
         startCal = Calendar.getInstance();
-        startCal.setTime(startdato);
+        startCal.setTime(startDate);
         startCal.add(Calendar.DAY_OF_WEEK, 1);
 
-        int arbeidsdager = 0;
-        while (antallDager > 0) {
+        int workingdays = 0;
+        while (numberOfDays > 0) {
             if (startCal.get(Calendar.DAY_OF_WEEK) != Calendar.SATURDAY
                 && startCal.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY && !holidays.contains(
                 LocalDate.ofInstant(startCal.toInstant(), ZoneId.systemDefault()))) {
-                antallDager--;
+                numberOfDays--;
             }
 
             startCal.add(Calendar.DAY_OF_WEEK, 1);
-            arbeidsdager++;
+            workingdays++;
         }
 
         if (startCal.get(Calendar.HOUR) > stop.get(Calendar.HOUR)) {
-            arbeidsdager++;
+            workingdays++;
         }
 
-        return arbeidsdager;
+        return workingdays;
     }
 
     public void setWorkdayStartAndStop(Calendar start, Calendar stop) {

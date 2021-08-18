@@ -5,8 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.Month;
-import java.time.ZonedDateTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -61,10 +59,14 @@ class WorkdayCalendarTest {
     }
 
     @Test
-    void testHentantallbusinessdager() {
-        Integer antallBusinessdagerFraDato = workdayCalendar.getAntallBusinessdagerFraDato(
+    void test_get_number_of_business_days_from_date() {
+        workdayCalendar.setWorkdayStartAndStop(
+            new GregorianCalendar(2004, Calendar.JANUARY, 1, 8, 0),
+            new GregorianCalendar(2004, Calendar.JANUARY, 1, 16, 0));
+
+        Integer antallBusinessdagerFraDato = workdayCalendar.numberOfBusinessDaysFromDate(
             new GregorianCalendar(2004, Calendar.MAY, 24, 19, 3).getTime(), 44);
-        assertEquals(60, antallBusinessdagerFraDato);
+        assertEquals(61, antallBusinessdagerFraDato);
     }
 
     private String formatOutput(SimpleDateFormat f, Date start, Float increment) {
