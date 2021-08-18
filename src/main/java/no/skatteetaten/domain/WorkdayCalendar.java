@@ -4,7 +4,6 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
@@ -19,24 +18,32 @@ public class WorkdayCalendar {
     private Calendar workingDayStop;
 
     public Date getWorkdayIncrement(Date startDate, float incrementInWorkdays) {
-        LocalDateTime startDateAndTime = startTimeOfWorkingDayBasertOneDate(startDate);
+        LocalDateTime startDateAndTime = startTimeOfWorkingDayBasedOnDate(startDate, incrementInWorkdays);
 
         int days = (int) incrementInWorkdays;
         float remaining = incrementInWorkdays - days;
-        float fhours = remaining * 8f;
-        int hours = (int) fhours;
-        remaining = fhours - hours;
-        float fminutes = remaining * 60f;
-        int minutes = (int) fminutes;
+        float floatHours = remaining * 8f;
+        int hours = (int) floatHours;
+        remaining = floatHours - hours;
+        float floatMinutes = remaining * 60f;
+        int minutes = (int) floatMinutes;
 
-        LocalDateTime lastWorkingDay =
-            startDateAndTime.plusDays(numberOfBusinessDaysFromDate(startDate, days)).plusHours(hours).plusMinutes(minutes);
-        Instant instant = lastWorkingDay.atZone(ZoneId.systemDefault()).toInstant();
+        Integer businessDayFromDate = numberOfBusinessDaysFromDate(startDate, days);
+        Instant instant;
+        if (incrementInWorkdays > 0) {
+            LocalDateTime lastWorkingDay =
+                startDateAndTime.plusDays(businessDayFromDate).plusHours(hours).plusMinutes(minutes);
+            instant = lastWorkingDay.atZone(ZoneId.systemDefault()).toInstant();
+        } else {
+            LocalDateTime lastWorkingDay =
+                startDateAndTime.minusDays(businessDayFromDate).plusHours(hours);
+            instant = lastWorkingDay.atZone(ZoneId.systemDefault()).toInstant();
+        }
 
         return Date.from(instant);
     }
 
-    LocalDateTime startTimeOfWorkingDayBasertOneDate(Date startDate) {
+    LocalDateTime startTimeOfWorkingDayBasedOnDate(Date startDate, float incrementInWorkdays) {
         LocalDateTime startTimeOfWorkingDay = Instant.ofEpochMilli(startDate.getTime())
             .atZone(ZoneId.systemDefault())
             .toLocalDate().atStartOfDay();
@@ -44,11 +51,16 @@ public class WorkdayCalendar {
         Calendar startCal = Calendar.getInstance();
         startCal.setTime(startDate);
 
-        if (startCal.get(Calendar.HOUR_OF_DAY) >= workingDayStart.get(Calendar.HOUR_OF_DAY)
+        if (incrementInWorkdays >= 0 && startCal.get(Calendar.HOUR_OF_DAY) >= workingDayStart.get(Calendar.HOUR_OF_DAY)
             && startCal.get(Calendar.HOUR_OF_DAY) < workingDayStop.get(Calendar.HOUR_OF_DAY)) {
-            return startTimeOfWorkingDay.plusHours(startCal.get(Calendar.HOUR_OF_DAY)).plusMinutes(startCal.get(Calendar.MINUTE));
+            return startTimeOfWorkingDay.plusHours(startCal.get(Calendar.HOUR_OF_DAY))
+                .plusMinutes(startCal.get(Calendar.MINUTE));
+        } else if (incrementInWorkdays < 0 && startCal.get(Calendar.HOUR_OF_DAY) >= workingDayStop.get(
+            Calendar.HOUR_OF_DAY)) {
+            return startTimeOfWorkingDay.plus(workingDayStop.get(Calendar.HOUR_OF_DAY), ChronoUnit.HOURS);
+
         } else {
-            return startTimeOfWorkingDay.plus(workingDayStart.get(Calendar.HOUR), ChronoUnit.HOURS);
+            return startTimeOfWorkingDay.plus(workingDayStart.get(Calendar.HOUR_OF_DAY), ChronoUnit.HOURS);
         }
     }
 
@@ -56,20 +68,34 @@ public class WorkdayCalendar {
         Calendar startCal;
         startCal = Calendar.getInstance();
         startCal.setTime(startDate);
-        startCal.add(Calendar.DAY_OF_WEEK, 1);
 
         int workingdays = 0;
-        while (numberOfDays > 0) {
-            if (isDayAWorkingDay(startCal)) {
-                numberOfDays--;
+        if (numberOfDays > 0) {
+            startCal.add(Calendar.DAY_OF_WEEK, 1);
+            while (numberOfDays > 0) {
+                if (isDayAWorkingDay(startCal)) {
+                    numberOfDays--;
+                }
+
+                startCal.add(Calendar.DAY_OF_WEEK, 1);
+                workingdays++;
             }
 
-            startCal.add(Calendar.DAY_OF_WEEK, 1);
-            workingdays++;
-        }
+            if (startCal.get(Calendar.HOUR_OF_DAY) > workingDayStop.get(Calendar.HOUR_OF_DAY)) {
+                workingdays++;
+            }
+        } else {
+            startCal.add(Calendar.DAY_OF_WEEK, -1);
+            int abs = Math.abs(numberOfDays);
+            while (abs > 0) {
+                if (isDayAWorkingDay(startCal)) {
+                    abs--;
+                }
 
-        if (startCal.get(Calendar.HOUR_OF_DAY) > workingDayStop.get(Calendar.HOUR_OF_DAY)) {
-            workingdays++;
+                startCal.add(Calendar.DAY_OF_WEEK, -1);
+                workingdays++;
+
+            }
         }
 
         return workingdays;

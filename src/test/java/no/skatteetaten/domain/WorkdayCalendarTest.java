@@ -53,8 +53,8 @@ class WorkdayCalendarTest {
         Date start = new GregorianCalendar(2004, Calendar.MAY, 24, 19, 3).getTime();
         float increment = 44.723656f;
 
-        assertEquals(formatOutput(f, start, increment),
-            "24-05-2004 19:03 med tillegg av 44.723656 arbeidsdager er 27-07-2004 13:47");
+        assertEquals("24-05-2004 19:03 med tillegg av 44.723656 arbeidsdager er 27-07-2004 13:47",
+            formatOutput(f, start, increment));
     }
 
     @Test
@@ -72,8 +72,9 @@ class WorkdayCalendarTest {
         Date start = new GregorianCalendar(2004, Calendar.MAY, 24, 8, 3).getTime();
         float increment = 12.782709f;
 
-        assertEquals(formatOutput(f, start, increment),
-            "24-05-2004 08:03 med tillegg av 12.782709 arbeidsdager er 10-06-2004 14:18");
+        assertEquals(
+            "24-05-2004 08:03 med tillegg av 12.782709 arbeidsdager er 10-06-2004 14:18",
+            formatOutput(f, start, increment));
     }
 
     @Test
@@ -91,8 +92,27 @@ class WorkdayCalendarTest {
         Date start = new GregorianCalendar(2004, Calendar.MAY, 24, 7, 3).getTime();
         float increment = 8.276628f;
 
-        assertEquals(formatOutput(f, start, increment),
-            "24-05-2004 07:03 med tillegg av 8.276628 arbeidsdager er 04-06-2004 10:12");
+        assertEquals("24-05-2004 07:03 med tillegg av 8.276628 arbeidsdager er 04-06-2004 10:12",
+            formatOutput(f, start, increment));
+    }
+
+    @Test
+    void test_that_calculator_shows_correct_for_negative_number_1() {
+        workdayCalendar.setWorkdayStartAndStop(
+            new GregorianCalendar(2004, Calendar.JANUARY, 1, 8, 0),
+            new GregorianCalendar(2004, Calendar.JANUARY, 1, 16, 0));
+
+        workdayCalendar.setRecurringHoliday(
+            new GregorianCalendar(2004, Calendar.MAY, 17, 0, 0));
+
+        workdayCalendar.setHoliday(
+            new GregorianCalendar(2004, Calendar.MAY, 27, 0, 0));
+        SimpleDateFormat f = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+        Date start = new GregorianCalendar(2004, Calendar.MAY, 24, 18, 5).getTime();
+        float increment = -5.5f;
+
+        assertEquals("24-05-2004 18:05 med tillegg av -5.5 arbeidsdager er 14-05-2004 12:00",
+            formatOutput(f, start, increment));
     }
 
     @Test
