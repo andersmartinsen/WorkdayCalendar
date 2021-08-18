@@ -1,6 +1,7 @@
 package no.skatteetaten.domain;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.text.SimpleDateFormat;
@@ -69,10 +70,22 @@ class WorkdayCalendarTest {
         assertEquals(61, antallBusinessdagerFraDato);
     }
 
+    @Test
+    void test_that_wednesday_23_august_is_a_working_day() {
+        assertTrue(workdayCalendar.isDayAWorkingDay(new GregorianCalendar(2021, Calendar.AUGUST, 23, 8, 0)));
+    }
+
+    @Test
+    void test_that_saturday_21_august_is_not_a_working_day() {
+        assertFalse(workdayCalendar.isDayAWorkingDay(new GregorianCalendar(2021, Calendar.AUGUST, 21, 8, 0)));
+    }
+
     private String formatOutput(SimpleDateFormat f, Date start, Float increment) {
         return f.format(start) + " med tillegg av " +
             increment + " arbeidsdager er " + f.format(workdayCalendar.getWorkdayIncrement(start, increment));
 
     }
+
+
 
 }
