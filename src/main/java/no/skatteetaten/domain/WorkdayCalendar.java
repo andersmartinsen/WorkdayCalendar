@@ -1,56 +1,58 @@
 package no.skatteetaten.domain;
 
-import static java.time.DayOfWeek.FRIDAY;
-import static java.time.DayOfWeek.MONDAY;
-import static java.time.DayOfWeek.THURSDAY;
-import static java.time.DayOfWeek.TUESDAY;
-import static java.time.DayOfWeek.WEDNESDAY;
-
-import java.time.DayOfWeek;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class WorkdayCalendar {
 
     private final Set<LocalDate> holidays = new HashSet<>();
 
     public Date getWorkdayIncrement(Date startDate, float incrementInWorkdays) {
-        LocalDate startDato = LocalDate.of(2012, 3, 7);
-        LocalDate endDate = LocalDate.of(2012, 6, 7);
+        LocalDateTime startDato = Instant.ofEpochMilli(startDate.getTime())
+            .atZone(ZoneId.systemDefault())
+            .toLocalDateTime();
 
-// I've hardcoded the holidays as LocalDates
-// and put them in a Set
-// For the sake of efficiency, I also put the business days into a Set.
-// In general, a Set has a better lookup speed than a List.
-        final Set<DayOfWeek> businessDays = Set.of(
-            MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY
-        );
+        System.out.println("Startdato er: " + startDate);
 
-        List<LocalDate> allDates =
+        int days = (int) incrementInWorkdays;
+        float remaining = incrementInWorkdays - days;
+        float fhours = remaining * 8f;
+        int hours = (int) fhours;
+        remaining = fhours - hours;
+        float fminutes = remaining * 60f;
+        int minutes = (int) fminutes;
 
-            // Java 9 provides a method to return a stream with dates from the
-            // startdate to the given end date. Note that the end date itself is
-            // NOT included.
-            startDato.datesUntil(endDate)
+        LocalDateTime endDate = startDato.plusDays(getAntallBusinessdagerFraDato(startDate, days)).plusHours(hours).plusMinutes(minutes);
+        Instant instant = endDate.atZone(ZoneId.systemDefault()).toInstant();
 
-                // Retain all business days. Use static imports from
-                // java.time.DayOfWeek.*
-                .filter(t -> businessDays.contains(t.getDayOfWeek()))
+        return Date.from(instant);
+    }
 
-                // Retain only dates not present in our holidays list
-                .filter(t -> !holidays.contains(t))
+    public Integer getAntallBusinessdagerFraDato(Date startdato, Integer antallDager) {
+        Calendar startCal;
+        startCal = Calendar.getInstance();
+        startCal.setTime(startdato);
+        startCal.add(Calendar.DAY_OF_WEEK, 1);
 
-                // Collect them into a List. If you only need to know the number of
-                // dates, you can also use .count()
-                .collect(Collectors.toList());
+        int arbeidsdager = 0;
+        while (antallDager > 0) {
+            if (startCal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY
+                || startCal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY || holidays.contains(LocalDate.ofInstant(startCal.toInstant(), ZoneId.systemDefault()))) {
+            } else {
+                antallDager--;
+            }
 
-        return new Date();
+            startCal.add(Calendar.DAY_OF_WEEK, 1);
+            arbeidsdager++;
+        }
+        return arbeidsdager;
     }
 
     public void setWorkdayStartAndStop(Calendar Start, Calendar stop) {

@@ -51,14 +51,20 @@ class WorkdayCalendarTest {
         workdayCalendar.setHoliday(
             new GregorianCalendar(2004, Calendar.MAY, 27, 0, 0));
         SimpleDateFormat f = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-        Date start = new GregorianCalendar(2004, Calendar.MAY, 24, 18, 5).getTime();
-        float increment = -5.5f;
+        Date start = new GregorianCalendar(2004, Calendar.MAY, 24, 19, 3).getTime();
+        float increment = 44.723656f;
         System.out.println(
             f.format(start) + " med tillegg av " +
                 increment + " arbeidsdager er " + f.format(workdayCalendar.getWorkdayIncrement(start, increment)));
 
-        assertEquals(workdayCalendar.getWorkdayIncrement(start, increment),
-            formatOutput(f, start, increment));
+        assertEquals(formatOutput(f, start, increment), "24-05-2004 19:03 med tillegg av 44.723656 arbeidsdager er 27-07-2004 13:47");
+    }
+
+    @Test
+    void testHentantallbusinessdager() {
+        Integer antallBusinessdagerFraDato = workdayCalendar.getAntallBusinessdagerFraDato(
+            new GregorianCalendar(2004, Calendar.MAY, 24, 19, 3).getTime(), 44);
+        assertEquals(60, antallBusinessdagerFraDato);
     }
 
     private String formatOutput(SimpleDateFormat f, Date start, Float increment) {
