@@ -23,22 +23,10 @@ public class WorkdayCalendar {
         Integer businessDayFromDate = numberOfBusinessDaysFromDate(startDate, (int) incrementInWorkdays);
 
         LocalDateTime workingDateAfterIncrementingWorkdays =
-            incrementInWorkdays > 0 ? calculate(incrementInWorkdays, startDateAndTime.plusDays(businessDayFromDate))
-                : calculate(incrementInWorkdays, startDateAndTime.minusDays(businessDayFromDate));
+            incrementInWorkdays > 0 ? calculateFloatingHoursAndMinutes(incrementInWorkdays, startDateAndTime.plusDays(businessDayFromDate))
+                : calculateFloatingHoursAndMinutes(incrementInWorkdays, startDateAndTime.minusDays(businessDayFromDate));
 
         return Date.from(workingDateAfterIncrementingWorkdays.atZone(ZoneId.systemDefault()).toInstant());
-    }
-
-    private LocalDateTime calculate(float incrementInWorkdays, LocalDateTime startDateAndTime) {
-        int days = (int) incrementInWorkdays;
-        float remaining = incrementInWorkdays - days;
-        float floatHours = remaining * 8f;
-        int hours = (int) floatHours;
-        remaining = floatHours - hours;
-        float floatMinutes = remaining * 60f;
-        int minutes = (int) floatMinutes;
-
-        return startDateAndTime.plusHours(hours).plusMinutes(minutes);
     }
 
     public void setWorkdayStartAndStop(Calendar start, Calendar stop) {
@@ -71,11 +59,15 @@ public class WorkdayCalendar {
             numberOfBusinessDays++;
         }
 
-        if (numberOfDays > 0 && startCal.get(Calendar.HOUR_OF_DAY) > workingDayStop.get(Calendar.HOUR_OF_DAY)) {
+        if (ifIncrementingDaysIsAPositiveNumberAndTimeAfterEndOfWorkingDay(numberOfDays, startCal)) {
             numberOfBusinessDays++;
         }
 
         return numberOfBusinessDays;
+    }
+
+    private boolean ifIncrementingDaysIsAPositiveNumberAndTimeAfterEndOfWorkingDay(Integer numberOfDays, Calendar startCal) {
+        return numberOfDays > 0 && startCal.get(Calendar.HOUR_OF_DAY) > workingDayStop.get(Calendar.HOUR_OF_DAY);
     }
 
     boolean isDayAWorkingDay(Calendar startCal) {
@@ -117,5 +109,17 @@ public class WorkdayCalendar {
         return incrementInWorkdays >= 0 && startCal.get(Calendar.HOUR_OF_DAY) >= workingDayStart.get(
             Calendar.HOUR_OF_DAY)
             && startCal.get(Calendar.HOUR_OF_DAY) < workingDayStop.get(Calendar.HOUR_OF_DAY);
+    }
+
+    private LocalDateTime calculateFloatingHoursAndMinutes(float incrementInWorkdays, LocalDateTime startDateAndTime) {
+        int days = (int) incrementInWorkdays;
+        float remaining = incrementInWorkdays - days;
+        float floatHours = remaining * 8f;
+        int hours = (int) floatHours;
+        remaining = floatHours - hours;
+        float floatMinutes = remaining * 60f;
+        int minutes = (int) floatMinutes;
+
+        return startDateAndTime.plusHours(hours).plusMinutes(minutes);
     }
 }
