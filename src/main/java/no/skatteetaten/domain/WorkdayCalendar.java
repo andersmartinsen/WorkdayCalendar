@@ -36,7 +36,7 @@ public class WorkdayCalendar {
             instant = lastWorkingDay.atZone(ZoneId.systemDefault()).toInstant();
         } else {
             LocalDateTime lastWorkingDay =
-                startDateAndTime.minusDays(businessDayFromDate).plusHours(hours);
+                startDateAndTime.minusDays(businessDayFromDate).plusHours(hours).plusMinutes(minutes);
             instant = lastWorkingDay.atZone(ZoneId.systemDefault()).toInstant();
         }
 

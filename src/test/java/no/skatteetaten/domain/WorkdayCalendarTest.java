@@ -116,6 +116,25 @@ class WorkdayCalendarTest {
     }
 
     @Test
+    void test_that_calculator_shows_correct_for_negative_number_2() {
+        workdayCalendar.setWorkdayStartAndStop(
+            new GregorianCalendar(2004, Calendar.JANUARY, 1, 8, 0),
+            new GregorianCalendar(2004, Calendar.JANUARY, 1, 16, 0));
+
+        workdayCalendar.setRecurringHoliday(
+            new GregorianCalendar(2004, Calendar.MAY, 17, 0, 0));
+
+        workdayCalendar.setHoliday(
+            new GregorianCalendar(2004, Calendar.MAY, 27, 0, 0));
+        SimpleDateFormat f = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+        Date start = new GregorianCalendar(2004, Calendar.MAY, 24, 18, 3).getTime();
+        float increment = -6.7470217f;
+
+        assertEquals("24-05-2004 18:03 med tillegg av -6.7470217 arbeidsdager er 13-05-2004 10:02",
+            formatOutput(f, start, increment));
+    }
+
+    @Test
     void test_get_number_of_business_days_from_date() {
         workdayCalendar.setWorkdayStartAndStop(
             new GregorianCalendar(2004, Calendar.JANUARY, 1, 8, 0),
