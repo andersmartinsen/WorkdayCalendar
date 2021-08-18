@@ -19,6 +19,10 @@ class WorkdayCalendarTest {
     @BeforeEach
     public void oppsett() {
         workdayCalendar = new WorkdayCalendar();
+        workdayCalendar.setWorkdayStartAndStop(
+            new GregorianCalendar(2004, Calendar.JANUARY, 1, 8, 0),
+            new GregorianCalendar(2004, Calendar.JANUARY, 1, 16, 0));
+
     }
 
     @Test
@@ -40,10 +44,6 @@ class WorkdayCalendarTest {
 
     @Test
     void test_that_calculator_shows_correct_for_positive_number() {
-        workdayCalendar.setWorkdayStartAndStop(
-            new GregorianCalendar(2004, Calendar.JANUARY, 1, 8, 0),
-            new GregorianCalendar(2004, Calendar.JANUARY, 1, 16, 0));
-
         workdayCalendar.setRecurringHoliday(
             new GregorianCalendar(2004, Calendar.MAY, 17, 0, 0));
 
@@ -59,10 +59,6 @@ class WorkdayCalendarTest {
 
     @Test
     void test_that_calculator_shows_correct_for_positive_number_2() {
-        workdayCalendar.setWorkdayStartAndStop(
-            new GregorianCalendar(2004, Calendar.JANUARY, 1, 8, 0),
-            new GregorianCalendar(2004, Calendar.JANUARY, 1, 16, 0));
-
         workdayCalendar.setRecurringHoliday(
             new GregorianCalendar(2004, Calendar.MAY, 17, 0, 0));
 
@@ -79,10 +75,6 @@ class WorkdayCalendarTest {
 
     @Test
     void test_that_calculator_shows_correct_for_positive_number_3() {
-        workdayCalendar.setWorkdayStartAndStop(
-            new GregorianCalendar(2004, Calendar.JANUARY, 1, 8, 0),
-            new GregorianCalendar(2004, Calendar.JANUARY, 1, 16, 0));
-
         workdayCalendar.setRecurringHoliday(
             new GregorianCalendar(2004, Calendar.MAY, 17, 0, 0));
 
@@ -98,10 +90,6 @@ class WorkdayCalendarTest {
 
     @Test
     void test_that_calculator_shows_correct_for_negative_number_1() {
-        workdayCalendar.setWorkdayStartAndStop(
-            new GregorianCalendar(2004, Calendar.JANUARY, 1, 8, 0),
-            new GregorianCalendar(2004, Calendar.JANUARY, 1, 16, 0));
-
         workdayCalendar.setRecurringHoliday(
             new GregorianCalendar(2004, Calendar.MAY, 17, 0, 0));
 
@@ -117,10 +105,6 @@ class WorkdayCalendarTest {
 
     @Test
     void test_that_calculator_shows_correct_for_negative_number_2() {
-        workdayCalendar.setWorkdayStartAndStop(
-            new GregorianCalendar(2004, Calendar.JANUARY, 1, 8, 0),
-            new GregorianCalendar(2004, Calendar.JANUARY, 1, 16, 0));
-
         workdayCalendar.setRecurringHoliday(
             new GregorianCalendar(2004, Calendar.MAY, 17, 0, 0));
 
@@ -136,10 +120,6 @@ class WorkdayCalendarTest {
 
     @Test
     void test_get_number_of_business_days_from_date() {
-        workdayCalendar.setWorkdayStartAndStop(
-            new GregorianCalendar(2004, Calendar.JANUARY, 1, 8, 0),
-            new GregorianCalendar(2004, Calendar.JANUARY, 1, 16, 0));
-
         Integer antallBusinessdagerFraDato = workdayCalendar.numberOfBusinessDaysFromDate(
             new GregorianCalendar(2004, Calendar.MAY, 24, 19, 3).getTime(), 44);
         assertEquals(61, antallBusinessdagerFraDato);
