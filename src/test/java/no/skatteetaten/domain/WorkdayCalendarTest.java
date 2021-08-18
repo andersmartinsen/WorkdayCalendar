@@ -23,10 +23,20 @@ class WorkdayCalendarTest {
     }
 
     @Test
-    void test_that_holidays_returns_correct_number() {
+    void test_that_holidays_returns_correct_date_after_adding_recurring_holiday() {
         GregorianCalendar cal = new GregorianCalendar(2021, 11, 31);
         workdayCalendar.setRecurringHoliday(cal);
         assertTrue(workdayCalendar.getHolidays().contains(LocalDate.of(2021, 12, 31)));
+    }
+
+    @Test
+    void test_that_holidays_returns_correct_date_after_adding_recurring_holiday_and_holiday() {
+        GregorianCalendar newYearsEve = new GregorianCalendar(2021, 11, 31);
+        workdayCalendar.setRecurringHoliday(newYearsEve);
+        GregorianCalendar nationalDay = new GregorianCalendar(2021, 4, 17);
+        workdayCalendar.setHoliday(nationalDay);
+        assertTrue(workdayCalendar.getHolidays().contains(LocalDate.of(2021, 12, 31)));
+        assertTrue(workdayCalendar.getHolidays().contains(LocalDate.of(2021, 5, 17)));
     }
 
     @Test

@@ -62,6 +62,7 @@ public class WorkdayCalendar {
     }
 
     public void setHoliday(GregorianCalendar gregorianCalendar) {
+        holidays.add(gregorianCalendar.toZonedDateTime().toLocalDate());
 
     }
 
