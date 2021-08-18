@@ -39,7 +39,7 @@ class WorkdayCalendarTest {
     }
 
     @Test
-    public void test_that_calculator_shows_correct_() {
+    void test_that_calculator_shows_correct_() {
         workdayCalendar.setWorkdayStartAndStop(
             new GregorianCalendar(2004, Calendar.JANUARY, 1, 8, 0),
             new GregorianCalendar(2004, Calendar.JANUARY, 1, 16, 0));
@@ -52,9 +52,6 @@ class WorkdayCalendarTest {
         SimpleDateFormat f = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         Date start = new GregorianCalendar(2004, Calendar.MAY, 24, 19, 3).getTime();
         float increment = 44.723656f;
-        System.out.println(
-            f.format(start) + " med tillegg av " +
-                increment + " arbeidsdager er " + f.format(workdayCalendar.getWorkdayIncrement(start, increment)));
 
         assertEquals(formatOutput(f, start, increment), "24-05-2004 19:03 med tillegg av 44.723656 arbeidsdager er 27-07-2004 13:47");
     }
