@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
 import java.util.Date;
@@ -18,9 +19,7 @@ public class WorkdayCalendar {
     private Calendar workingDayStop;
 
     public Date getWorkdayIncrement(Date startDate, float incrementInWorkdays) {
-        LocalDateTime startDato = Instant.ofEpochMilli(startDate.getTime())
-            .atZone(ZoneId.systemDefault())
-            .toLocalDate().atStartOfDay().plus(workingDayStart.get(Calendar.HOUR), ChronoUnit.HOURS);
+        LocalDateTime startDateAndTime = startTimeOfWorkingDayBasertOneDate(startDate);
 
         int days = (int) incrementInWorkdays;
         float remaining = incrementInWorkdays - days;
@@ -30,11 +29,27 @@ public class WorkdayCalendar {
         float fminutes = remaining * 60f;
         int minutes = (int) fminutes;
 
-        LocalDateTime endDate =
-            startDato.plusDays(numberOfBusinessDaysFromDate(startDate, days)).plusHours(hours).plusMinutes(minutes);
-        Instant instant = endDate.atZone(ZoneId.systemDefault()).toInstant();
+        LocalDateTime lastWorkingDay =
+            startDateAndTime.plusDays(numberOfBusinessDaysFromDate(startDate, days)).plusHours(hours).plusMinutes(minutes);
+        Instant instant = lastWorkingDay.atZone(ZoneId.systemDefault()).toInstant();
 
         return Date.from(instant);
+    }
+
+    LocalDateTime startTimeOfWorkingDayBasertOneDate(Date startDate) {
+        LocalDateTime startTimeOfWorkingDay = Instant.ofEpochMilli(startDate.getTime())
+            .atZone(ZoneId.systemDefault())
+            .toLocalDate().atStartOfDay();
+
+        Calendar startCal = Calendar.getInstance();
+        startCal.setTime(startDate);
+
+        if (startCal.get(Calendar.HOUR_OF_DAY) >= workingDayStart.get(Calendar.HOUR_OF_DAY)
+            && startCal.get(Calendar.HOUR_OF_DAY) < workingDayStop.get(Calendar.HOUR_OF_DAY)) {
+            return startTimeOfWorkingDay.plusHours(startCal.get(Calendar.HOUR_OF_DAY)).plusMinutes(startCal.get(Calendar.MINUTE));
+        } else {
+            return startTimeOfWorkingDay.plus(workingDayStart.get(Calendar.HOUR), ChronoUnit.HOURS);
+        }
     }
 
     Integer numberOfBusinessDaysFromDate(Date startDate, Integer numberOfDays) {
@@ -53,7 +68,7 @@ public class WorkdayCalendar {
             workingdays++;
         }
 
-        if (startCal.get(Calendar.HOUR) > workingDayStop.get(Calendar.HOUR)) {
+        if (startCal.get(Calendar.HOUR_OF_DAY) > workingDayStop.get(Calendar.HOUR_OF_DAY)) {
             workingdays++;
         }
 

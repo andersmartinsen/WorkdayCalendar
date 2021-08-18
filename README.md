@@ -32,7 +32,7 @@ new GregorianCalendar(2004, Calendar.MAY, 17, 0, 0));
 workdayCalendar.setHoliday(
 new GregorianCalendar(2004, Calendar.MAY, 27, 0, 0)); SimpleDateFormat f = new SimpleDateFormat("dd-MM-yyyy HH:mm");
 Date start = new GregorianCalendar(2004, Calendar.MAY, 24, 18, 5). getTime(); float increment = -5.5f;
-System.out.println(
+.println(
 f.format(start) + " med tillegg av " + increment + " arbeidsdager er " + f.format(workdayCalendar.getWorkdayIncrement(
 start, increment))); Noe som burde gi følgende resultat:
 24-05-2004 18:05 med tillegg av -5.5 arbeidsdager er 14-05-2004 12:00 Andre korrekte resultater:

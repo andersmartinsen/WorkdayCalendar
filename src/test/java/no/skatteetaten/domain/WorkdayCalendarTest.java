@@ -39,7 +39,7 @@ class WorkdayCalendarTest {
     }
 
     @Test
-    void test_that_calculator_shows_correct_() {
+    void test_that_calculator_shows_correct_for_positive_number() {
         workdayCalendar.setWorkdayStartAndStop(
             new GregorianCalendar(2004, Calendar.JANUARY, 1, 8, 0),
             new GregorianCalendar(2004, Calendar.JANUARY, 1, 16, 0));
@@ -53,7 +53,27 @@ class WorkdayCalendarTest {
         Date start = new GregorianCalendar(2004, Calendar.MAY, 24, 19, 3).getTime();
         float increment = 44.723656f;
 
-        assertEquals(formatOutput(f, start, increment), "24-05-2004 19:03 med tillegg av 44.723656 arbeidsdager er 27-07-2004 13:47");
+        assertEquals(formatOutput(f, start, increment),
+            "24-05-2004 19:03 med tillegg av 44.723656 arbeidsdager er 27-07-2004 13:47");
+    }
+
+    @Test
+    void test_that_calculator_shows_correct_for_positive_number_2() {
+        workdayCalendar.setWorkdayStartAndStop(
+            new GregorianCalendar(2004, Calendar.JANUARY, 1, 8, 0),
+            new GregorianCalendar(2004, Calendar.JANUARY, 1, 16, 0));
+
+        workdayCalendar.setRecurringHoliday(
+            new GregorianCalendar(2004, Calendar.MAY, 17, 0, 0));
+
+        workdayCalendar.setHoliday(
+            new GregorianCalendar(2004, Calendar.MAY, 27, 0, 0));
+        SimpleDateFormat f = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+        Date start = new GregorianCalendar(2004, Calendar.MAY, 24, 8, 3).getTime();
+        float increment = 12.782709f;
+
+        assertEquals(formatOutput(f, start, increment),
+            "24-05-2004 08:03 med tillegg av 12.782709 arbeidsdager er 10-06-2004 14:18");
     }
 
     @Test
@@ -82,7 +102,4 @@ class WorkdayCalendarTest {
             increment + " arbeidsdager er " + f.format(workdayCalendar.getWorkdayIncrement(start, increment));
 
     }
-
-
-
 }
