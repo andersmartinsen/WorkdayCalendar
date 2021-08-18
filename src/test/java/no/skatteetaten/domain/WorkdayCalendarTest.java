@@ -23,6 +23,12 @@ class WorkdayCalendarTest {
             new GregorianCalendar(2004, Calendar.JANUARY, 1, 8, 0),
             new GregorianCalendar(2004, Calendar.JANUARY, 1, 16, 0));
 
+        workdayCalendar.setRecurringHoliday(
+            new GregorianCalendar(2004, Calendar.MAY, 17, 0, 0));
+
+        workdayCalendar.setHoliday(
+            new GregorianCalendar(2004, Calendar.MAY, 27, 0, 0));
+
     }
 
     @Test
@@ -44,11 +50,7 @@ class WorkdayCalendarTest {
 
     @Test
     void test_that_calculator_shows_correct_for_positive_number() {
-        workdayCalendar.setRecurringHoliday(
-            new GregorianCalendar(2004, Calendar.MAY, 17, 0, 0));
 
-        workdayCalendar.setHoliday(
-            new GregorianCalendar(2004, Calendar.MAY, 27, 0, 0));
         SimpleDateFormat f = new SimpleDateFormat("dd-MM-yyyy HH:mm");
         Date start = new GregorianCalendar(2004, Calendar.MAY, 24, 19, 3).getTime();
         float increment = 44.723656f;
@@ -122,7 +124,7 @@ class WorkdayCalendarTest {
     void test_get_number_of_business_days_from_date() {
         Integer antallBusinessdagerFraDato = workdayCalendar.numberOfBusinessDaysFromDate(
             new GregorianCalendar(2004, Calendar.MAY, 24, 19, 3).getTime(), 44);
-        assertEquals(61, antallBusinessdagerFraDato);
+        assertEquals(64, antallBusinessdagerFraDato);
     }
 
     @Test
