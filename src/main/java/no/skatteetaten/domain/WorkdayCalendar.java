@@ -65,40 +65,27 @@ public class WorkdayCalendar {
     }
 
     Integer numberOfBusinessDaysFromDate(Date startDate, Integer numberOfDays) {
-        Calendar startCal;
-        startCal = Calendar.getInstance();
+        Calendar startCal = Calendar.getInstance();
         startCal.setTime(startDate);
 
-        int workingdays = 0;
-        if (numberOfDays > 0) {
-            startCal.add(Calendar.DAY_OF_WEEK, 1);
-            while (numberOfDays > 0) {
-                if (isDayAWorkingDay(startCal)) {
-                    numberOfDays--;
-                }
+        int numberOfBusinessDays = 0;
+        int positiveNumberOfDays = Math.abs(numberOfDays);
 
-                startCal.add(Calendar.DAY_OF_WEEK, 1);
-                workingdays++;
+        startCal.add(Calendar.DAY_OF_WEEK, numberOfDays > 0 ? 1 : -1);
+        while (positiveNumberOfDays > 0) {
+            if (isDayAWorkingDay(startCal)) {
+                positiveNumberOfDays--;
             }
 
-            if (startCal.get(Calendar.HOUR_OF_DAY) > workingDayStop.get(Calendar.HOUR_OF_DAY)) {
-                workingdays++;
-            }
-        } else {
-            startCal.add(Calendar.DAY_OF_WEEK, -1);
-            int abs = Math.abs(numberOfDays);
-            while (abs > 0) {
-                if (isDayAWorkingDay(startCal)) {
-                    abs--;
-                }
-
-                startCal.add(Calendar.DAY_OF_WEEK, -1);
-                workingdays++;
-
-            }
+            startCal.add(Calendar.DAY_OF_WEEK, numberOfDays > 0 ? 1 : -1);
+            numberOfBusinessDays++;
         }
 
-        return workingdays;
+        if (numberOfDays > 0 && startCal.get(Calendar.HOUR_OF_DAY) > workingDayStop.get(Calendar.HOUR_OF_DAY)){
+            numberOfBusinessDays++;
+        }
+
+        return numberOfBusinessDays;
     }
 
     boolean isDayAWorkingDay(Calendar startCal) {
