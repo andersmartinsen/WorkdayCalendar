@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TimeZone;
 
 public class WorkdayCalendar {
 
@@ -34,12 +35,18 @@ public class WorkdayCalendar {
         this.workingDayStop = stop;
     }
 
-    public void setRecurringHoliday(GregorianCalendar gregorianCalendar) {
-        holidays.add(gregorianCalendar.toZonedDateTime().toLocalDate());
+    public void setRecurringHoliday(Calendar calendar) {
+        holidays.add(calendarToLocale(calendar));
     }
 
-    public void setHoliday(GregorianCalendar gregorianCalendar) {
-        holidays.add(gregorianCalendar.toZonedDateTime().toLocalDate());
+    public void setHoliday(Calendar calendar) {
+        holidays.add(calendarToLocale(calendar));
+    }
+
+    private LocalDate calendarToLocale(Calendar calendar) {
+        TimeZone tz = calendar.getTimeZone();
+        ZoneId zoneId = tz.toZoneId();
+        return LocalDate.ofInstant(calendar.toInstant(), zoneId);
     }
 
     Integer numberOfBusinessDaysFromDate(Date startDate, Integer numberOfDays) {
